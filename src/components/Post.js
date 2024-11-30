@@ -1,43 +1,71 @@
-import LikeButton from "./LikeButton";
-import AddCommentForm from "./AddCommentForm";
+import React, { useState } from 'react';
+import CommentList from './CommentList';
+import LikeButton from './LikeButton';
 
-const Post = ({ post, currentUser }) => {
+const Post = ({ post, userId }) => {
+    const [commentContent, setCommentContent] = useState('');
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    postId: post.postId,
+                    userId: userId,
+                    content: commentContent,
+                }),
+            });
+
+            if (response.ok) {
+                alert('Comment added successfully!');
+                setCommentContent(''); // Clear the input
+            } else {
+                alert('Failed to add comment.');
+            }
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
+
     return (
         <div className="card mb-3">
             <div className="card-body">
-                <h5 className="card-title">{post.content || 'No content'}</h5>
-                {post.imageUrl && <img src={post.imageUrl} className="card-img-top" alt="Post" />}
-                <p className="card-text text-muted">
-                    Posted by {post.user?.userName || 'Unknown User'}
+                <h3>{post.content}</h3>
+                {post.imageUrl && <img src={post.imageUrl} alt="Post visual" />}
+                <p>Posted by: {post.user.userName}</p>
+                <p>
+                    <strong>Likes:</strong>{' '}
+                    {post.likes.map((like, index) => (
+                        <span key={like.id}>
+                            {like.user.userName}
+                            {index < post.likes.length - 1 ? ', ' : ''}
+                        </span>
+                    ))}
                 </p>
-
-                {/* Likes Section */}
-                <p className="card-text">
-                    <strong>Likes:</strong> {post.likes?.length > 0 ? (
-                    post.likes.map((like, index) => <span key={index}>{like.userName}, </span>)
-                ) : (
-                    'No likes yet.'
-                )}
-                </p>
-
-                {/* Comments Section */}
-                <h6>Comments</h6>
-                {post.comments?.length > 0 ? (
-                    <ul>
-                        {post.comments.map((comment, index) => (
-                            <li key={index}>
-                                <strong>{comment.userName}:</strong> {comment.content}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No comments yet.</p>
-                )}
-
-                <LikeButton postId={post.postId} currentUser={currentUser} />
-                <AddCommentForm postId={post.postId} currentUser={currentUser} />
+                <CommentList comments={post.comments} />
+                <form onSubmit={handleAddComment} className="mt-3">
+                    <div className="mb-3">
+                        <label>Add a Comment</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={commentContent}
+                            onChange={(e) => setCommentContent(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                        Add Comment
+                    </button>
+                </form>
+                <LikeButton postId={post.postId} userId={userId} />
             </div>
         </div>
     );
 };
+
 export default Post;

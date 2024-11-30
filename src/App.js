@@ -1,19 +1,38 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import Navbar from './components/Navbar';
+import React, { useState } from 'react';
+import PostList from './components/PostList';
+import AddPostForm from './components/AddPostForm';
+import Login from './components/Login';
 
-function App() {
+const App = () => {
+    const [user, setUser] = useState(null);
+
+    const handleLogin = (userData) => {
+        setUser(userData);
+    };
+
+    const handleLogout = () => {
+        setUser(null);
+    };
+
     return (
-        <Router>
-            <Navbar />
-            <div className="container">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                </Routes>
-            </div>
-        </Router>
+        <div className="container">
+            <h1>Welcome to Likeaholic</h1>
+            {!user ? (
+                <Login onLogin={handleLogin} />
+            ) : (
+                <>
+                    <p>
+                        Logged in as <strong>{user.userName}</strong>
+                        <button onClick={handleLogout} className="btn btn-link">
+                            Logout
+                        </button>
+                    </p>
+                    <AddPostForm userId={user.userId} />
+                    <PostList userId={user.userId} />
+                </>
+            )}
+        </div>
     );
-}
+};
 
 export default App;

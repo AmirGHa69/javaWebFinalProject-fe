@@ -1,29 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import Post from './Post';
 
-const PostList = () => {
+const PostList = ({ userId }) => {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/posts') // Ensure the correct backend URL
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => setPosts(data))
-            .catch((error) => console.error('Error fetching posts:', error));
+        const fetchPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/posts');
+                const data = await response.json();
+                setPosts(data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchPosts();
     }, []);
+
+    if (loading) {
+        return <p>Loading posts...</p>;
+    }
 
     return (
         <div>
             <h2>All Posts</h2>
-            {posts.length > 0 ? (
-                posts.map((post) => <Post key={post.postId} post={post} />)
-            ) : (
-                <p>No posts available.</p>
-            )}
+            {posts.map((post) => (
+                <Post key={post.id} post={post} userId={userId} />
+            ))}
         </div>
     );
 };

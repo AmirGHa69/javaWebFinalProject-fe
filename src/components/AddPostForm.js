@@ -4,36 +4,41 @@ const AddPostForm = ({ userId }) => {
     const [content, setContent] = useState('');
     const [imageUrl, setImageUrl] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:8080/api/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, imageUrl, userId }),
+            });
 
-        fetch('http://localhost:8080/api/posts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, content, imageUrl }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Post created:', data);
+            if (response.ok) {
                 alert('Post added successfully!');
-            })
-            .catch((error) => console.error('Error:', error));
+                setContent('');
+                setImageUrl('');
+            } else {
+                alert('Failed to create post.');
+            }
+        } catch (error) {
+            console.error('Error creating post:', error);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="card p-3 mb-3">
-            <h3>Add Post</h3>
+            <h3>Add a New Post</h3>
             <div className="mb-3">
-                <label className="form-label">Content</label>
+                <label>Content</label>
                 <textarea
                     className="form-control"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
-                ></textarea>
+                />
             </div>
             <div className="mb-3">
-                <label className="form-label">Image URL</label>
+                <label>Image URL</label>
                 <input
                     type="text"
                     className="form-control"
@@ -41,7 +46,9 @@ const AddPostForm = ({ userId }) => {
                     onChange={(e) => setImageUrl(e.target.value)}
                 />
             </div>
-            <button type="submit" className="btn btn-primary">Add Post</button>
+            <button type="submit" className="btn btn-primary">
+                Add Post
+            </button>
         </form>
     );
 };
