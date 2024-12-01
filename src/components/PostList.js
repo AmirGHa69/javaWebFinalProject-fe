@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Post from './Post';
 
-const PostList = ({ userId }) => {
+const PostList = ({ userId, refreshKey, refreshPosts }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -19,7 +19,7 @@ const PostList = ({ userId }) => {
         };
 
         fetchPosts();
-    }, []);
+    }, [refreshKey]);
 
     if (loading) {
         return <p>Loading posts...</p>;
@@ -29,7 +29,7 @@ const PostList = ({ userId }) => {
         <div>
             <h2>All Posts</h2>
             {posts.map((post) => (
-                <Post key={post.id} post={post} userId={userId} />
+                <Post key={post.id} post={post} userId={userId} refreshPosts={refreshPosts} />
             ))}
         </div>
     );

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CommentList from './CommentList';
 import LikeButton from './LikeButton';
 
-const Post = ({ post, userId }) => {
+const Post = ({ post, userId, refreshPosts }) => {
     const [commentContent, setCommentContent] = useState('');
 
     const handleAddComment = async (e) => {
@@ -10,9 +10,7 @@ const Post = ({ post, userId }) => {
         try {
             const response = await fetch(`http://localhost:8080/api/comments`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     postId: post.postId,
                     userId: userId,
@@ -22,7 +20,8 @@ const Post = ({ post, userId }) => {
 
             if (response.ok) {
                 alert('Comment added successfully!');
-                setCommentContent(''); // Clear the input
+                setCommentContent('');
+                refreshPosts(); // Refresh posts after adding a comment
             } else {
                 alert('Failed to add comment.');
             }
@@ -62,7 +61,7 @@ const Post = ({ post, userId }) => {
                         Add Comment
                     </button>
                 </form>
-                <LikeButton postId={post.postId} userId={userId} />
+                <LikeButton postId={post.postId} userId={userId} refreshPosts={refreshPosts} />
             </div>
         </div>
     );

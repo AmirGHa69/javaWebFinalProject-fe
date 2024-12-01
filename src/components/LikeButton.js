@@ -1,4 +1,4 @@
-const LikeButton = ({ postId, userId }) => {
+const LikeButton = ({ postId, userId, refreshPosts }) => {
     const handleLike = async () => {
         try {
             const response = await fetch('http://localhost:8080/api/likes', {
@@ -6,10 +6,14 @@ const LikeButton = ({ postId, userId }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ postId, userId }),
+                body: JSON.stringify({
+                    postId: postId,
+                    userId: userId,
+                }),
             });
             if (response.ok) {
                 alert('Post liked!');
+                refreshPosts();
             } else {
                 alert('Failed to like the post.');
             }

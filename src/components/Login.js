@@ -8,10 +8,6 @@ const Login = ({ onLogin }) => {
         e.preventDefault();
         try {
             const response = await fetch('http://localhost:8080/api/users');
-            if (!response.ok) {
-                alert('Failed to fetch users. Please try again.');
-                return;
-            }
             const users = await response.json();
             const user = users.find(
                 (u) => u.userName === username && u.userPassword === password
@@ -20,7 +16,7 @@ const Login = ({ onLogin }) => {
                 onLogin(user);
                 alert(`Logged in as ${user.userName}`);
             } else {
-                alert('Invalid username or password. Please try again.');
+                alert('Invalid username or password.');
             }
         } catch (error) {
             console.error('Error during login:', error);

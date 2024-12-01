@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AddPostForm = ({ userId }) => {
+const AddPostForm = ({ userId, onPostAdded }) => {
     const [content, setContent] = useState('');
     const [imageUrl, setImageUrl] = useState('');
 
@@ -17,6 +17,7 @@ const AddPostForm = ({ userId }) => {
                 alert('Post added successfully!');
                 setContent('');
                 setImageUrl('');
+                onPostAdded(); // Refresh posts
             } else {
                 alert('Failed to create post.');
             }

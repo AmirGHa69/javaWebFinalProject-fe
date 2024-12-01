@@ -4,7 +4,8 @@ import AddPostForm from './components/AddPostForm';
 import Login from './components/Login';
 
 const App = () => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null); // Logged-in user
+    const [refreshKey, setRefreshKey] = useState(0); // Key to trigger refresh
 
     const handleLogin = (userData) => {
         setUser(userData);
@@ -12,6 +13,10 @@ const App = () => {
 
     const handleLogout = () => {
         setUser(null);
+    };
+
+    const refreshPosts = () => {
+        setRefreshKey((prevKey) => prevKey + 1); // Increment key to trigger re-render
     };
 
     return (
@@ -27,8 +32,8 @@ const App = () => {
                             Logout
                         </button>
                     </p>
-                    <AddPostForm userId={user.userId} />
-                    <PostList userId={user.userId} />
+                    <AddPostForm userId={user.userId} onPostAdded={refreshPosts} />
+                    <PostList userId={user.userId} refreshKey={refreshKey} refreshPosts={refreshPosts} />
                 </>
             )}
         </div>
