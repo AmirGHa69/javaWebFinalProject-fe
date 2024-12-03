@@ -5,10 +5,30 @@ import LikeButton from './LikeButton';
 const Post = ({ post, userId, refreshPosts }) => {
     const [commentContent, setCommentContent] = useState('');
 
+    const handleDeletePost = async () => {
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/posts/${post.postId}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    alert('Post deleted successfully!');
+                    refreshPosts(); // Refresh posts after deletion
+                } else if (response.status === 403) {
+                    alert('You are not authorized to delete this post.');
+                } else {
+                    alert('Failed to delete post.');
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+            }
+        }
+    };
+
     const handleAddComment = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:8080/api/comments`, {
+            const response = await fetch('http://localhost:8080/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -17,7 +37,6 @@ const Post = ({ post, userId, refreshPosts }) => {
                     content: commentContent,
                 }),
             });
-
             if (response.ok) {
                 alert('Comment added successfully!');
                 setCommentContent('');
@@ -34,7 +53,7 @@ const Post = ({ post, userId, refreshPosts }) => {
         <div className="card mb-3">
             <div className="card-body">
                 <h3>{post.content}</h3>
-                {post.imageUrl && <img src={post.imageUrl} alt="Post visual" />}
+                {post.imageUrl && <img src={post.imageUrl} alt="Post visual" className="img-fluid" />}
                 <p>Posted by: {post.user.userName}</p>
                 <p>
                     <strong>Likes:</strong>{' '}
@@ -62,6 +81,14 @@ const Post = ({ post, userId, refreshPosts }) => {
                     </button>
                 </form>
                 <LikeButton postId={post.postId} userId={userId} refreshPosts={refreshPosts} />
+                {userId === post.user.userId && ( // Only show the delete button for the logged-in user's posts
+                    <button
+                        onClick={handleDeletePost}
+                        className="btn btn-danger mt-3"
+                    >
+                        Delete Post
+                    </button>
+                )}
             </div>
         </div>
     );

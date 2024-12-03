@@ -5,6 +5,7 @@ const PostList = ({ userId, refreshKey, refreshPosts }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
