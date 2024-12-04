@@ -5,7 +5,6 @@ const PostList = ({ userId, refreshKey, refreshPosts }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -30,7 +29,7 @@ const PostList = ({ userId, refreshKey, refreshPosts }) => {
         <div>
             <h2>All Posts</h2>
             {posts.map((post) => (
-                <Post key={post.id} post={post} userId={userId} refreshPosts={refreshPosts} />
+                <Post key={post.postId} post={post} userId={userId} refreshPosts={refreshPosts} />
             ))}
         </div>
     );

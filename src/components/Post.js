@@ -49,6 +49,24 @@ const Post = ({ post, userId, refreshPosts }) => {
         }
     };
 
+    const handleRemoveLike = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/likes/${post.postId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                alert('Like removed successfully!');
+                refreshPosts(); // Refresh posts after removing the like
+            } else {
+                alert('Failed to remove like.');
+            }
+        } catch (error) {
+            console.error('Error removing like:', error);
+        }
+    };
+
+    const userHasLiked = post.likes.some((like) => like.user.userId === userId);
+
     return (
         <div className="card mb-3">
             <div className="card-body">
@@ -80,7 +98,16 @@ const Post = ({ post, userId, refreshPosts }) => {
                         Add Comment
                     </button>
                 </form>
-                <LikeButton postId={post.postId} userId={userId} refreshPosts={refreshPosts} />
+                {userHasLiked ? (
+                    <button
+                        onClick={handleRemoveLike}
+                        className="btn btn-secondary mt-3"
+                    >
+                        Remove Like
+                    </button>
+                ) : (
+                    <LikeButton postId={post.postId} userId={userId} refreshPosts={refreshPosts} />
+                )}
                 {userId === post.user.userId && ( // Only show the delete button for the logged-in user's posts
                     <button
                         onClick={handleDeletePost}
