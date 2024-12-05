@@ -21,6 +21,10 @@ const PostList = ({ userId, refreshKey, refreshPosts }) => {
         fetchPosts();
     }, [refreshKey]);
 
+    const removePostLocally = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.postId !== postId));
+    };
+
     if (loading) {
         return <p>Loading posts...</p>;
     }
@@ -29,7 +33,13 @@ const PostList = ({ userId, refreshKey, refreshPosts }) => {
         <div>
             <h2>All Posts</h2>
             {posts.map((post) => (
-                <Post key={post.postId} post={post} userId={userId} refreshPosts={refreshPosts} />
+                <Post
+                    key={post.id}
+                    post={post}
+                    userId={userId}
+                    refreshPosts={refreshPosts}
+                    removePostLocally={removePostLocally} // Pass the local removal function
+                />
             ))}
         </div>
     );
