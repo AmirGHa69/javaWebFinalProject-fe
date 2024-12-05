@@ -76,6 +76,42 @@ const Post = ({ post, userId, refreshPosts, removePostLocally }) => {
         }
     };
 
+    const handleEditComment = async (commentId, content) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content }),
+            });
+            if (response.ok) {
+                alert('Comment updated successfully!');
+                refreshPosts();
+            } else {
+                alert('Failed to update comment.');
+            }
+        } catch (error) {
+            console.error('Error editing comment:', error);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (window.confirm('Are you sure you want to delete this comment?')) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    alert('Comment deleted successfully!');
+                    refreshPosts();
+                } else {
+                    alert('Failed to delete comment.');
+                }
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+            }
+        }
+    };
+
     const handleRemoveLike = async () => {
         try {
             const response = await fetch(`http://localhost:8080/api/likes/${post.postId}`, {
@@ -145,7 +181,12 @@ const Post = ({ post, userId, refreshPosts, removePostLocally }) => {
                                 </span>
                             ))}
                         </p>
-                        <CommentList comments={post.comments} />
+                        <CommentList
+                            comments={post.comments}
+                            userId={userId}
+                            onEditComment={handleEditComment}
+                            onDeleteComment={handleDeleteComment}
+                        />
                         <form onSubmit={handleAddComment} className="mt-3">
                             <div className="mb-3">
                                 <label>Add a Comment</label>
