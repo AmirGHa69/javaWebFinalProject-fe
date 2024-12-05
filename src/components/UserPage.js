@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UpdateUserForm from "./UpdateUserForm";
+import './ProfilePage.css';
+
 
 const UserPage = ({ userId }) => {
     const [users, setUsers] = useState([]); // List of all users
